@@ -1,0 +1,13 @@
+{% load django_bootstrap5 %}
+
+{% block content %}
+  <h1> Registration </h1>
+  <form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div>
+      <button type="submit">Register</button>
+      <p>Already have an account?<a href="/login">login</a></p>
+    </div>
+  </form>
+{% endblock %}

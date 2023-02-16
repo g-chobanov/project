@@ -1,13 +1,8 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
+from django.contrib.auth.models import User
 
 # Create your models here.
-class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=128)
-    password = models.CharField(max_length=256)
-
-
 class List(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=128)
@@ -21,6 +16,7 @@ class Song(models.Model):
     featuredartists = models.CharField(max_length=256, blank=True)
     year = models.IntegerField(validators=[MaxValueValidator(9999)])
     listnumber = models.IntegerField()
+    listowner = models.ForeignKey(List, on_delete=models.CASCADE)
 
     
 
