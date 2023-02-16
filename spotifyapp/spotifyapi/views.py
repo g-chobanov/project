@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .credentials import *
 from rest_framework.views import APIView
-from requests import Request, Response, post
+from requests import Request, post
+from rest_framework.response import Response
 from rest_framework import status
 from .util import is_spotify_authenticated, update_or_create_user_tokens
 # Create your views here.
@@ -17,7 +18,7 @@ class AuthURL(APIView):
             'client_id': CLIENT_ID
         }).prepare().url
 
-        return Response({url: url}, status=status.HTTP_200_OK)
+        return Response({'url': url}, status=status.HTTP_200_OK)
     
 class IsAuthenticated(APIView):
     def get(self, request, format=None):
@@ -25,7 +26,7 @@ class IsAuthenticated(APIView):
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
     
 def spotify_api_callback(request, format=None):
-    code = request.GET.get(code)
+    code = request.GET.get('code')
 
     response = post('https://accounts.spotify.com/api/token', data={
         'grant_type': 'authorization_code',
@@ -37,14 +38,16 @@ def spotify_api_callback(request, format=None):
 
     access_token = response.get('access_token')
     token_type = response.get('token_type')
-    refersh_token = response.get('refresh_token')
+    refresh_token = response.get('refresh_token')
     expires_in = response.get('expires_in')
     error = response.get('error')
+
+    print(expires_in)
     
     session_key = request.session.session_key
     if not request.session.exists(session_key):
-        request.session.create(session_key, access_token, token_type, expires_in, refersh_token)
+        request.session.create(session_key, access_token, token_type, expires_in, refresh_token)
 
-    update_or_create_user_tokens()
+    update_or_create_user_tokens(session_key, access_token, token_type, expires_in, refresh_token)
 
     return redirect('songster:')
