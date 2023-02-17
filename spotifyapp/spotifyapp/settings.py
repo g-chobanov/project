@@ -39,9 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'songster',
-    'api',
-    'rest_framework',
-    'rest_framework_api_key',
     'requests',
     'spotifyapi',
     "django_bootstrap5"
