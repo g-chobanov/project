@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from requests import Request, post
 from rest_framework.response import Response
 from rest_framework import status
-from .util import is_spotify_authenticated, update_or_create_user_tokens
+from .util import is_spotify_authenticated, spotify_request, update_or_create_user_tokens
 # Create your views here.
 
 class AuthURL(APIView):
@@ -41,13 +41,33 @@ def spotify_api_callback(request, format=None):
     refresh_token = response.get('refresh_token')
     expires_in = response.get('expires_in')
     error = response.get('error')
-
-    print(expires_in)
     
-    session_key = request.session.session_key
-    if not request.session.exists(session_key):
-        request.session.create(session_key, access_token, token_type, expires_in, refresh_token)
+    if not request.session.exists(request.session.session_key):
+        request.session.create()
 
-    update_or_create_user_tokens(session_key, access_token, token_type, expires_in, refresh_token)
+    update_or_create_user_tokens(request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
     return redirect('songster:')
+
+class SearchSong(APIView):
+    def get(self, request):
+        if not request.session.exists(request.session.session_key):
+             request.session.create()
+
+        session_id = request.session.get('user_session_key', None)
+        q = request.query_params.get("query", None)
+        spotify_endpoint = "search"
+        spotify_response = spotify_request(session_id, spotify_endpoint, "GET", params={'q': q, 'type' : 'track'})
+        tracks = spotify_response["tracks"]["items"]
+        tracks_template_data = []
+        for track in tracks:
+            needed_info = {
+                'artists' : [artist['name'] for artist in track['artists']],
+                'name': track['name'],
+                'year': track['album']['release_date'].split('-')[0],
+                'track_cover': track['album']['images'][1],
+                'preview_url': track['preview_url']
+            }
+            tracks_template_data.append(needed_info)
+        return Response({'status': tracks_template_data}, status=status.HTTP_200_OK)
+

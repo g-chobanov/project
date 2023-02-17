@@ -2,12 +2,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="{% static 'index.js' %}"></script>
+        <script src="{% static 'index.js' %}" defer></script>
     </head>
     <body>
     {% block content %}
         <button onclick="authenticate_spotify()">Authenticate</button>
         <a href="/logout">logout</a>
+        <button onclick="searchSong()">search</button>
+        <input id="querry" name="querry"> </input>
+        <div id="search-results">
+            start searching!
+        </div>
     {% endblock content%}
     </body>
 </html>
