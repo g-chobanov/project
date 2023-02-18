@@ -66,7 +66,8 @@ class SearchSong(APIView):
                 'name': track['name'],
                 'year': track['album']['release_date'].split('-')[0],
                 'track_cover': track['album']['images'][1],
-                'preview_url': track['preview_url']
+                'preview_url': track['preview_url'],
+                'spotify_uri': track['uri']
             }
             tracks_template_data.append(needed_info)
         return Response({'status': tracks_template_data}, status=status.HTTP_200_OK)
