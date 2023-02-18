@@ -8,13 +8,13 @@
         {% for list in lists%}
         <div class="list-profile-container">
             <h3>list.name</h3>
-            <a href="list?id={{listid}}">check out list</a>     
+            <a href="list?id={{list.id}}">check out list</a>     
         </div>
         {% endfor %}
     {% elif is_your_page %}
         <p> You have no lists created yet! </p>
     {% else %}
-        {{username}} has no lists created yet
+        <p>{{username}} has no lists created yet</p>
     {% endif %}
     {% if is_your_page %}
         <a href='/new_list'>create new list</a>

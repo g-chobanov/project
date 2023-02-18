@@ -53,12 +53,17 @@ def get_user_profile_page(request):
 def get_list(request):
     listid = request.GET.get("id", None)
     userid = List.objects.filter(id=listid).first().user.pk
-    list_name = List.objects.filter(id=listid).first().name
+    list = List.objects.filter(id=listid).first()
+    if request.method == 'POST':
+        new_name = request.POST.get('new_name')
+        list.name = new_name
+        list.save()    
     songlist = Song.objects.filter(list_owner_id=listid)
     context = {
         'songs' : songlist,
-        'list_name' : list_name,
+        'list_name' : list.name,
         'listid' : listid ,
+        'reached_max': len(songlist) >= 50,
         'is_current_user_list' : userid == request.user.id ,
     }
     return render(request, 'listpage.html', context)

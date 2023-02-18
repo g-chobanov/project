@@ -1,3 +1,5 @@
+let search_results = []
+
 const searchSong = () => {
     const querry = document.getElementById('querry').value;
     fetch(`/spotifyapi/search?query=${querry}`)
@@ -12,13 +14,13 @@ const searchSong = () => {
             console.log("error")
             return;
         }
+        let index = 0;
         items.forEach(result => {
             const div = document.createElement('div');
-            console.log(result)
             div.innerHTML = `
-                <h2>${result.name}</h2>
-                <p>Artist:${result.artists.join(', ')}</p> 
-                <p>Year:${result.year}</p>
+                <h2>${index} ${result.name}</h2>
+                <p>By: ${result.artists.join(', ')}</p> 
+                <p>Year: ${result.year}</p>
                 <img src="${ result.track_cover.url}" alt="Track cover">
                 <audio controls>
                     <source src="${ result.preview_url }" type="audio/mpeg">
@@ -26,7 +28,13 @@ const searchSong = () => {
                 </audio>
             `
             container.appendChild(div);
+            search_results.push(result)
+            console.log(search_results);
+            index++;
         });
+
+        const search_form = document.getElementById('choose-result-form');
+        search_form.style.display = "block";
          
        });
 }

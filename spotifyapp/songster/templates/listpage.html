@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="{% static 'listcreation.js' %}" defer></script>
+    </head>
+    <body>
+    {% block content%}
+        <h1>{{list_name}}</h1>
+        {% if is_current_user_list %}
+        <form method="post">
+            {% csrf_token %}
+            <label for="new_name">Edit name</label>
+            <input type="text" id="new_name" name="new_name" value="{{ list_name }}">
+            <button type="submit">Save</button>
+        </form>
+        {% endif %}
+        {% if songlist%}
+        {% endif %}
+        {% if is_current_user_list and not reached_max%}
+            <div id="choose-result-form" style="display: none">
+                <label for="search_result">
+                    Choose the number of one of the search results
+                <input type="number" id="search_result" name="search_result">
+                </label>
+                <label for="writeup">
+                    Write something about the song
+                <input type="textarea" id="writeup" name="writeup"></input>
+                </label>
+            </div>
+            <button onclick="searchSong()">search</button>
+            <input id="querry" name="querry"> </input>
+            <div id="search-results">
+                start searching!
+            </div>
+            
+        {% endif %}
+
+    {% endblock content%}
+    </body>
+<html>
