@@ -15,7 +15,7 @@ from .models import List, Song
 @login_required(login_url='/login')
 def index(request):
     context = {
-        'list' : List.objects,
+        'lists' : List.objects.all(),
         'userid' : request.user.id
     }
     return render(request,'homescreen.html', context)

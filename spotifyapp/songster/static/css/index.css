@@ -1,0 +1,51 @@
+body {
+    background-color: rgb(139, 226, 139);
+}
+
+.header {
+    background-color: rgb(91, 214, 91);
+    border-radius: 10px;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+button, a {
+    height: 40px;
+    border: 1px solid rgb(139, 226, 139);
+    border-radius: 3px;
+    background-color: rgb(139, 226, 139);
+    color: white;
+    text-transform: lowercase;
+    font-family:'Times New Roman', Times, serif;
+    font-size: 20px;
+    justify-items: center;
+    text-decoration: none;
+    
+}
+
+button {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+
+a {
+    padding: 10px 10px 0px;
+}
+
+.list-profile-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    background-color: rgb(52, 187, 52);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    justify-items: center;
+}
+

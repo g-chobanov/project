@@ -3,28 +3,40 @@
 <html>
     <head>
         <script src="{% static 'listpage.js' %}" defer></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/listpage.css' %}">
     </head>
     <body>
     {% block content%}
+        <div class="header">
         <h1>{{list_name}}</h1>
-        {% if is_current_user_list %}
-        <form method="post">
-            {% csrf_token %}
-            <label for="new_name">Edit name</label>
-            <input type="text" id="new_name" name="new_name" value="{{ list_name }}">
-            <button type="submit">Save</button>
-        </form>
-        {% endif %}
+            {% if is_current_user_list %}
+            <form method="post">
+                {% csrf_token %}
+                <label for="new_name">Edit name</label>
+                <input type="text" id="new_name" name="new_name" value="{{ list_name }}">
+                <button type="submit">Save</button>
+            </form>
+            {% endif %}
+        </div>
+        
         {% if songs%}
+        <div class="card-container">
+            
             {% for song in songs%}
-                <h1>{{song.list_number}}. {{song.name}}</h1>
-                <p>By {{song.artist}} {% if song.featured_artists%} ft. {{song.featured_artists}} {% endif%}
-                <p>{{song.year}}</p>
+            <div class="card">
                 <img src="{{song.img_url}}" alt="Track cover">
-                <p>{{song.writeup}}</p>
+                <div class="track-info">
+                <h1>{{song.list_number}}. {{song.name}}</h1>
+                    <p>By {{song.artist}} {% if song.featured_artists%} ft. {{song.featured_artists}} {% endif%}
+                    <p>{{song.year}}</p>
+                    <p>{{song.writeup}}</p>
+                </div>
+            </div>
             {% endfor %}
             <a href="/spotifyapi/create_playlist?id={{listid}}">Turn to playlist</a>
+        </div>
         {% endif %}
+        
         {% if is_current_user_list and not reached_max%}
             <form>
             {% csrf_token %}

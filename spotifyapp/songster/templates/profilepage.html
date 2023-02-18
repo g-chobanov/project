@@ -1,9 +1,14 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/profilepage.css' %}">
 {% block content %}
-    {% if is_your_page %}
-    <p>Logged in as {{username}}</p>
-    {% else %}
-    <p>{{username}}'s profile page</p>
-    {% endif %}
+    <div class="header">
+        {% if is_your_page %}
+        <p>Logged in as {{username}}</p>
+        {% else %}
+        <p>{{username}}'s profile page</p>
+        {% endif %}
+    </div>
+    
     {% if lists%}
         {% for list in lists%}
         <div class="list-profile-container">

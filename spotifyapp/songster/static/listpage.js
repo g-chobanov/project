@@ -18,14 +18,16 @@ const searchSong = () => {
         items.forEach(result => {
             const div = document.createElement('div');
             div.innerHTML = `
-                <h2>${index} ${result.name}</h2>
-                <p>By: ${result.artists.join(', ')}</p> 
-                <p>Year: ${result.year}</p>
-                <img src="${ result.track_cover.url}" alt="Track cover">
-                <audio controls>
-                    <source src="${ result.preview_url }" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
+                <div id="card">
+                    <h2>${index} ${result.name}</h2>
+                    <p>By: ${result.artists.join(', ')}</p> 
+                    <p>Year: ${result.year}</p>
+                    <img src="${ result.track_cover.url}" alt="Track cover">
+                    <audio controls>
+                        <source src="${ result.preview_url }" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
             `
             container.appendChild(div);
             search_results.push(result)
