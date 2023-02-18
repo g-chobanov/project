@@ -19,7 +19,7 @@ button, a {
     border: 1px solid rgb(139, 226, 139);
     border-radius: 3px;
     background-color: rgb(139, 226, 139);
-    color: white;
+    color: black;
     text-transform: lowercase;
     font-family:'Times New Roman', Times, serif;
     font-size: 20px;
