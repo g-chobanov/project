@@ -23,6 +23,7 @@
                 <img src="{{song.img_url}}" alt="Track cover">
                 <p>{{song.writeup}}</p>
             {% endfor %}
+            <a href="/spotifyapi/create_playlist?id={{listid}}">Turn to playlist</a>
         {% endif %}
         {% if is_current_user_list and not reached_max%}
             <form>
@@ -46,7 +47,7 @@
             </div>
             
         {% endif %}
-
+        
     {% endblock content%}
     </body>
 <html>

@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
+
+from spotifyapi.create_playlist_util import create_playlist, put_songs_in_playlist
 from .credentials import *
 from rest_framework.views import APIView
 from requests import Request, post
 from rest_framework.response import Response
 from rest_framework import status
-from .util import is_spotify_authenticated, spotify_request, update_or_create_user_tokens
+from .util import get_current_user, is_spotify_authenticated, spotify_request, update_or_create_user_tokens
 # Create your views here.
 
 class AuthURL(APIView):
@@ -71,4 +73,32 @@ class SearchSong(APIView):
             }
             tracks_template_data.append(needed_info)
         return Response({'status': tracks_template_data}, status=status.HTTP_200_OK)
+    
+class CreateNewPlaylistFromList(APIView):
+    def get(self, request):
+        if not request.session.exists(request.session.session_key):
+             request.session.create()
+
+        session_id = request.session.get('user_session_key', None)
+        current_user_id = get_current_user(session_id).get("id", None)
+        if current_user_id == None:
+             return Response({'error': "user does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        list_id = request.query_params.get("id", None)
+        playlist_call_response = create_playlist(session_id, list_id, current_user_id)
+        potential_error = playlist_call_response.get("Error", None)
+        if potential_error:
+            return Response({'error': potential_error}, status=status.HTTP_400_BAD_REQUEST)
+        
+        playlist_id = playlist_call_response["id"]
+        add_to_playlist_call_response = put_songs_in_playlist(session_id, list_id, playlist_id)
+
+        potential_error = add_to_playlist_call_response.get("Error", None)
+        if potential_error:
+            return Response({'error': potential_error}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return redirect(f'/list?id={list_id}')
+
+
+        
 

@@ -62,24 +62,30 @@ def refresh_token(session_id):
 def spotify_request(session_id, method_url, method, body = None, params = None):
     if method not in ['GET', 'POST', 'PUT']:
         return Response()
+    
     tokens = get_users_tokens(session_id)
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f"Bearer {tokens.access_token}"
     }
-    print(params)
+
+    print(body)
     response = ''
     if method == 'POST':
        response = post(f'{BASE_URL}/{method_url}', params=params, data=body, headers=headers)
     elif method == 'PUT':
        response = put(f'{BASE_URL}/{method_url}', params=params, data=body, headers=headers)
     elif method == 'GET':
-       response = get(f'{BASE_URL}/{method_url}', params=params, data=body, headers=headers)
+       response = get(f'{BASE_URL}/{method_url}', params=params, headers=headers)
 
     try:
         return response.json()
     except:
         return {"Error" : "Request failed"}
+    
+def get_current_user(session_id): 
+    endpoint = 'me'
+    return spotify_request(session_id, endpoint, "GET")
     
 
     
