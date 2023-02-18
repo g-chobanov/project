@@ -22,4 +22,6 @@ class AddSongForm(forms.ModelForm):
                   'artist',
                   'featured_artists',
                   'list_number',
-                  'year')
+                  'year',
+                  'writeup',
+                  'img_url')

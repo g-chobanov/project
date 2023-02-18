@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="{% static 'listcreation.js' %}" defer></script>
+        <script src="{% static 'listpage.js' %}" defer></script>
     </head>
     <body>
     {% block content%}
@@ -15,19 +15,30 @@
             <button type="submit">Save</button>
         </form>
         {% endif %}
-        {% if songlist%}
+        {% if songs%}
+            {% for song in songs%}
+                <h1>{{song.list_number}}. {{song.name}}</h1>
+                <p>By {{song.artist}} {% if song.featured_artists%} ft. {{song.featured_artists}} {% endif%}
+                <p>{{song.year}}</p>
+                <img src="{{song.img_url}}" alt="Track cover">
+                <p>{{song.writeup}}</p>
+            {% endfor %}
         {% endif %}
         {% if is_current_user_list and not reached_max%}
-            <div id="choose-result-form" style="display: none">
-                <label for="search_result">
-                    Choose the number of one of the search results
-                <input type="number" id="search_result" name="search_result">
-                </label>
-                <label for="writeup">
-                    Write something about the song
-                <input type="textarea" id="writeup" name="writeup"></input>
-                </label>
-            </div>
+            <form>
+            {% csrf_token %}
+                <div id="choose-result-form" style="display: none">
+                    <label for="search_result">
+                        Choose the number of one of the search results
+                    <input type="number" id="search_index" name="search_index">
+                    </label>
+                    <label for="writeup">
+                        Write something about the song
+                    <textarea id="writeup" name="writeup"></textarea>
+                    </label>
+                    <button id="add-song-btn">add song</button>
+                </div>
+            </form>
             <button onclick="searchSong()">search</button>
             <input id="querry" name="querry"> </input>
             <div id="search-results">

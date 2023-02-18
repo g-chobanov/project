@@ -7,7 +7,7 @@
     {% if lists%}
         {% for list in lists%}
         <div class="list-profile-container">
-            <h3>list.name</h3>
+            <h3>{{list.name}}</h3>
             <a href="list?id={{list.id}}">check out list</a>     
         </div>
         {% endfor %}

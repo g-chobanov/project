@@ -18,4 +18,6 @@ class Song(models.Model):
     featured_artists = models.CharField(max_length=256, blank=True)
     year = models.IntegerField(validators=[MaxValueValidator(9999)])
     list_number = models.IntegerField()
+    img_url = models.CharField(max_length=256)
+    writeup = models.CharField(max_length=256, blank=True)
     list_owner = models.ForeignKey(List, on_delete=models.CASCADE)

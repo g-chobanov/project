@@ -1,11 +1,13 @@
+import json
 from django.dispatch import receiver
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import User
-from requests import Response
+from rest_framework.response import Response
 from rest_framework import status
+from django.http import JsonResponse
 
 from .forms import AddSongForm, RegisterUserForm
 from .models import List, Song
@@ -58,7 +60,7 @@ def get_list(request):
         new_name = request.POST.get('new_name')
         list.name = new_name
         list.save()    
-    songlist = Song.objects.filter(list_owner_id=listid)
+    songlist = Song.objects.filter(list_owner_id=listid).order_by('-list_number')
     context = {
         'songs' : songlist,
         'list_name' : list.name,
@@ -76,28 +78,34 @@ def create_new_list(request):
 
 def add_song(request):
     if request.method == "POST":
-        name = request.POST.get('name', None)
-        artists = request.POST.get('artists', None)
-        year = request.POST.get('year', None)
-        spotify_uri = request.POST.get('spotify_uri', None)
-        listid = request.POST.get('listid', None)
-        number = request.POST.get('number', None)
+        body = request.body.decode('utf-8')
+        body_post_json_data = json.loads(body)
+        name = body_post_json_data.get('name', None)
+        artists = body_post_json_data.get('artists', None)
+        year = body_post_json_data.get('year', None)
+        spotify_uri = body_post_json_data.get('spotify_uri', None)
+        listid = body_post_json_data.get('listid', None)
+        writeup = body_post_json_data.get('writeup', None)
+        img_url = body_post_json_data.get('img_url', None)
     else:
-        return Response({"error": "invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"error": "invalid request"}, status=status.HTTP_400_BAD_REQUEST)
     artists_array = artists.split(', ')
     main_artist = artists_array[0]
     featured_artists = ' '.join(artists_array[1:])
     form = AddSongForm({'name': name,
-                        'artists': main_artist,
-                        'featuredartists:': featured_artists,
-                        'year': year,
+                        'artist': main_artist,
+                        'featured_artists:': featured_artists,
+                        'year': int(year),
                         'spotify_uri': spotify_uri,
-                        'listowner': listid,
-                        'listnumber': number})
+                        'list_owner': listid,
+                        'list_number': len(Song.objects.filter(list_owner_id=listid)) + 1,
+                        'writeup': writeup,
+                        'img_url': img_url
+                        })
     if not form.is_valid():
-      return Response({"error": "invalid form"}, status=status.HTTP_400_BAD_REQUEST)  
+      return JsonResponse({"error": "invalid form"}, status=status.HTTP_400_BAD_REQUEST)  
     form.save()
-    return(render, f'getlist?id={listid}')
+    return JsonResponse({ "link": f'list?id={listid}'}, status=status.HTTP_200_OK)
 
 def swap_songs(request):
     if request.method == "POST":
