@@ -8,11 +8,7 @@
     {% block content %}
         <button onclick="authenticate_spotify()">Authenticate</button>
         <a href="/logout">logout</a>
-        <button onclick="searchSong()">search</button>
-        <input id="querry" name="querry"> </input>
-        <div id="search-results">
-            start searching!
-        </div>
+        <a href="/profile_page?id={{userid}}">your profile</a>
     {% endblock content%}
     </body>
 </html>

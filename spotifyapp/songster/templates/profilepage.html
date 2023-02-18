@@ -1,0 +1,23 @@
+{% block content %}
+    {% if is_your_page %}
+    <p>Logged in as {{username}}</p>
+    {% else %}
+    <p>{{username}}'s profile page</p>
+    {% endif %}
+    {% if lists%}
+        {% for list in lists%}
+        <div class="list-profile-container">
+            <h3>list.name</h3>
+            <a href="list?id={{listid}}">check out list</a>     
+        </div>
+        {% endfor %}
+    {% elif is_your_page %}
+        <p> You have no lists created yet! </p>
+    {% else %}
+        {{username}} has no lists created yet
+    {% endif %}
+    {% if is_your_page %}
+        <a href='/new_list'>create new list</a>
+    {% endif%}
+
+{% endblock content%}

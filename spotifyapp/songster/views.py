@@ -13,7 +13,8 @@ from .models import List, Song
 @login_required(login_url='/login')
 def index(request):
     context = {
-        'list' : List.objects
+        'list' : List.objects,
+        'userid' : request.user.id
     }
     return render(request,'homescreen.html', context)
 
@@ -36,28 +37,37 @@ def save_session_key(sender, request, user, **kwargs):
     request.session['user_session_key'] = request.session.session_key
 
 def get_user_profile_page(request):
-    userid = request.query_params.get("id", None)
+    userid = request.GET.get("id", None)
+    if userid is None: 
+        Response({"error" : "user not found"}, status=status.HTTP_400_BAD_REQUEST)
+    userid = int(userid)
     username = User.objects.filter(id=userid).first().username
-    userlists = List.objects.filter(userid=id)
+    userlists = List.objects.filter(user_id=userid)
     context = {
         'lists': userlists,
-        'user': username,
+        'username': username,
         'is_your_page': userid == request.user.id
     }
-    return render(request,'profilepage.hmtl', context)
+    return render(request,'profilepage.html', context)
 
 def get_list(request):
-    listid = request.query_params.get("id", None)
-    userid = List.objects.filter(userid=userid).first().user.pk
+    listid = request.GET.get("id", None)
+    userid = List.objects.filter(id=listid).first().user.pk
     list_name = List.objects.filter(id=listid).first().name
-    songlist = Song.objects.filter(listid=listid)
+    songlist = Song.objects.filter(list_owner_id=listid)
     context = {
         'songs' : songlist,
         'list_name' : list_name,
         'listid' : listid ,
-        'is_current_user_list' : userid == request.user.id
+        'is_current_user_list' : userid == request.user.id ,
     }
     return render(request, 'listpage.html', context)
+
+def create_new_list(request):
+    user = User.objects.get(id=request.user.id)
+    new_list = List(name="New List", user=user)
+    new_list.save()
+    return redirect(f'/list?id={new_list.id}')
 
 def add_song(request):
     if request.method == "POST":
@@ -114,7 +124,7 @@ def remove_list(request):
     if not song_list:
         return Response({'state': 'invalid list id'}, status.HTTP_400_BAD_REQUEST)
     song_list.delete()
-    return Response({'state': 'sucessfully removed list'}, status.HTTP_200_OK)
+    return Response({'state': 'successfully removed list'}, status.HTTP_200_OK)
 
 def remove_song(request):
     if request.method == "POST":
@@ -126,7 +136,7 @@ def remove_song(request):
     if not song:
         return Response({'state': 'song not found'}, status.HTTP_400_BAD_REQUEST)
     song.delete()
-    return Response({'state': 'sucessfully removed list'}, status.HTTP_200_OK)
+    return Response({'state': 'successfully removed list'}, status.HTTP_200_OK)
 
 
 
